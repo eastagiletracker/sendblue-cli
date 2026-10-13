@@ -94,6 +94,7 @@ View recent messages.
 sendblue messages
 sendblue messages -n +15551234567 --limit 20
 sendblue messages --inbound
+sendblue messages -n +15551234567 --json
 ```
 
 | Flag | Description |
@@ -102,6 +103,7 @@ sendblue messages --inbound
 | `-l, --limit <count>` | Number of messages (default: 10) |
 | `--outbound` | Show only sent messages |
 | `--inbound` | Show only received messages |
+| `--json` | Print the full message objects (including `message_handle`) and pagination as JSON |
 
 ### `sendblue events`
 

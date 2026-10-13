@@ -80,6 +80,7 @@ program
     .option('-l, --limit <count>', 'Number of messages to show', '10')
     .option('--outbound', 'Show only outbound messages')
     .option('--inbound', 'Show only inbound messages')
+    .option('--json', 'Print messages and pagination as JSON')
     .action(messagesCommand)
 
 program

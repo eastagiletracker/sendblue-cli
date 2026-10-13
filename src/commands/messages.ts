@@ -9,6 +9,7 @@ export async function messagesCommand(opts: {
     limit?: string
     outbound?: boolean
     inbound?: boolean
+    json?: boolean
 }): Promise<void> {
     const creds = getCredentials()
     if (!creds) {
@@ -16,7 +17,8 @@ export async function messagesCommand(opts: {
         process.exit(1)
     }
 
-    const spinner = ora({ text: 'Fetching messages...', indent: 2 }).start()
+    // Keep stdout machine-readable in --json mode: no spinner, errors on stderr.
+    const spinner = ora({ text: 'Fetching messages...', indent: 2, isEnabled: !opts.json }).start()
 
     try {
         const isOutbound = opts.outbound ? true : opts.inbound ? false : undefined
@@ -30,6 +32,12 @@ export async function messagesCommand(opts: {
         })
 
         spinner.stop()
+
+        if (opts.json) {
+            process.stdout.write(`${JSON.stringify({ data: result.data, pagination: result.pagination }, null, 2)}\n`)
+            return
+        }
+
         console.log()
 
         if (result.data.length === 0) {
@@ -78,7 +86,13 @@ export async function messagesCommand(opts: {
             console.log()
         }
     } catch (err) {
-        spinner.fail(`Failed: ${err instanceof Error ? err.message : String(err)}`)
+        const message = `Failed: ${err instanceof Error ? err.message : String(err)}`
+        if (opts.json) {
+            spinner.stop()
+            printError(message)
+        } else {
+            spinner.fail(message)
+        }
         process.exit(1)
     }
 }
